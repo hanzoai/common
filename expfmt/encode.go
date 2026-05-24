@@ -24,6 +24,7 @@ import (
 	"google.golang.org/protobuf/encoding/prototext"
 
 	"github.com/hanzoai/common/model"
+	"github.com/hanzoai/common/model/promfamily"
 )
 
 // Encoder types encode metric families into an underlying wire protocol.
@@ -151,7 +152,7 @@ func NewEncoder(w io.Writer, format Format, options ...EncoderOption) Encoder {
 	case TypeProtoDelim:
 		return encoderCloser{
 			encode: func(v *dto.MetricFamily) error {
-				_, err := protodelim.MarshalTo(w, model.EscapeMetricFamily(v, escapingScheme))
+				_, err := protodelim.MarshalTo(w, promfamily.EscapeMetricFamily(v, escapingScheme))
 				return err
 			},
 			close: func() error { return nil },
@@ -159,7 +160,7 @@ func NewEncoder(w io.Writer, format Format, options ...EncoderOption) Encoder {
 	case TypeProtoCompact:
 		return encoderCloser{
 			encode: func(v *dto.MetricFamily) error {
-				_, err := fmt.Fprintln(w, model.EscapeMetricFamily(v, escapingScheme).String())
+				_, err := fmt.Fprintln(w, promfamily.EscapeMetricFamily(v, escapingScheme).String())
 				return err
 			},
 			close: func() error { return nil },
@@ -167,7 +168,7 @@ func NewEncoder(w io.Writer, format Format, options ...EncoderOption) Encoder {
 	case TypeProtoText:
 		return encoderCloser{
 			encode: func(v *dto.MetricFamily) error {
-				_, err := fmt.Fprintln(w, prototext.Format(model.EscapeMetricFamily(v, escapingScheme)))
+				_, err := fmt.Fprintln(w, prototext.Format(promfamily.EscapeMetricFamily(v, escapingScheme)))
 				return err
 			},
 			close: func() error { return nil },
@@ -175,7 +176,7 @@ func NewEncoder(w io.Writer, format Format, options ...EncoderOption) Encoder {
 	case TypeTextPlain:
 		return encoderCloser{
 			encode: func(v *dto.MetricFamily) error {
-				_, err := MetricFamilyToText(w, model.EscapeMetricFamily(v, escapingScheme))
+				_, err := MetricFamilyToText(w, promfamily.EscapeMetricFamily(v, escapingScheme))
 				return err
 			},
 			close: func() error { return nil },
@@ -183,7 +184,7 @@ func NewEncoder(w io.Writer, format Format, options ...EncoderOption) Encoder {
 	case TypeOpenMetrics:
 		return encoderCloser{
 			encode: func(v *dto.MetricFamily) error {
-				_, err := MetricFamilyToOpenMetrics(w, model.EscapeMetricFamily(v, escapingScheme), options...)
+				_, err := MetricFamilyToOpenMetrics(w, promfamily.EscapeMetricFamily(v, escapingScheme), options...)
 				return err
 			},
 			close: func() error {

@@ -23,9 +23,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	dto "github.com/prometheus/client_model/go"
 	"go.yaml.in/yaml/v2"
-	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -330,83 +328,11 @@ func IsValidLegacyMetricName(n string) bool {
 	return LegacyValidation.IsValidMetricName(n)
 }
 
-// EscapeMetricFamily escapes the given metric names and labels with the given
-// escaping scheme. Returns a new object that uses the same pointers to fields
-// when possible and creates new escaped versions so as not to mutate the
-// input.
-func EscapeMetricFamily(v *dto.MetricFamily, scheme EscapingScheme) *dto.MetricFamily {
-	if v == nil {
-		return nil
-	}
-
-	if scheme == NoEscaping {
-		return v
-	}
-
-	out := &dto.MetricFamily{
-		Help: v.Help,
-		Type: v.Type,
-		Unit: v.Unit,
-	}
-
-	// If the name is nil, copy as-is, don't try to escape.
-	if v.Name == nil || IsValidLegacyMetricName(v.GetName()) {
-		out.Name = v.Name
-	} else {
-		out.Name = proto.String(EscapeName(v.GetName(), scheme))
-	}
-	for _, m := range v.Metric {
-		if !metricNeedsEscaping(m) {
-			out.Metric = append(out.Metric, m)
-			continue
-		}
-
-		escaped := &dto.Metric{
-			Gauge:       m.Gauge,
-			Counter:     m.Counter,
-			Summary:     m.Summary,
-			Untyped:     m.Untyped,
-			Histogram:   m.Histogram,
-			TimestampMs: m.TimestampMs,
-		}
-
-		for _, l := range m.Label {
-			if l.GetName() == MetricNameLabel {
-				if l.Value == nil || IsValidLegacyMetricName(l.GetValue()) {
-					escaped.Label = append(escaped.Label, l)
-					continue
-				}
-				escaped.Label = append(escaped.Label, &dto.LabelPair{
-					Name:  proto.String(MetricNameLabel),
-					Value: proto.String(EscapeName(l.GetValue(), scheme)),
-				})
-				continue
-			}
-			if l.Name == nil || IsValidLegacyMetricName(l.GetName()) {
-				escaped.Label = append(escaped.Label, l)
-				continue
-			}
-			escaped.Label = append(escaped.Label, &dto.LabelPair{
-				Name:  proto.String(EscapeName(l.GetName(), scheme)),
-				Value: l.Value,
-			})
-		}
-		out.Metric = append(out.Metric, escaped)
-	}
-	return out
-}
-
-func metricNeedsEscaping(m *dto.Metric) bool {
-	for _, l := range m.Label {
-		if l.GetName() == MetricNameLabel && !IsValidLegacyMetricName(l.GetValue()) {
-			return true
-		}
-		if !IsValidLegacyMetricName(l.GetName()) {
-			return true
-		}
-	}
-	return false
-}
+// EscapeMetricFamily and the related metricNeedsEscaping helper moved
+// to the promfamily sub-package — they were the only users of the
+// prometheus/client_model/go ("dto") proto types in this package, and
+// model is consumed by code paths that need to stay free of that
+// transitive dependency.
 
 // EscapeName escapes the incoming name according to the provided escaping
 // scheme. Depending on the rules of escaping, this may cause no change in the
