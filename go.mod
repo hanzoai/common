@@ -1,6 +1,6 @@
 module github.com/hanzoai/common
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
@@ -14,7 +14,7 @@ require (
 	github.com/stretchr/testify v1.11.1
 	go.yaml.in/yaml/v2 v2.4.4
 	golang.org/x/net v0.48.0
-	golang.org/x/oauth2 v0.34.0
+	golang.org/x/oauth2 v0.36.0
 	google.golang.org/protobuf v1.36.11
 )
 
