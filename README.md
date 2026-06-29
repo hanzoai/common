@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/hero.svg" alt="common" width="880"></p>
+
 # Common
 ![circleci](https://circleci.com/gh/prometheus/common/tree/main.svg?style=shield)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/prometheus/common/badge)](https://securityscorecards.dev/viewer/?uri=github.com/prometheus/common)
