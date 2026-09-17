@@ -33,7 +33,7 @@ func EscapeMetricFamily(v *dto.MetricFamily, scheme model.EscapingScheme) *dto.M
 	if v.Name == nil || model.IsValidLegacyMetricName(v.GetName()) {
 		out.Name = v.Name
 	} else {
-		out.Name = proto.String(model.EscapeName(v.GetName(), scheme))
+		out.Name = new(model.EscapeName(v.GetName(), scheme))
 	}
 	for _, m := range v.Metric {
 		if !metricNeedsEscaping(m) {
@@ -58,7 +58,7 @@ func EscapeMetricFamily(v *dto.MetricFamily, scheme model.EscapingScheme) *dto.M
 				}
 				escaped.Label = append(escaped.Label, &dto.LabelPair{
 					Name:  proto.String(model.MetricNameLabel),
-					Value: proto.String(model.EscapeName(l.GetValue(), scheme)),
+					Value: new(model.EscapeName(l.GetValue(), scheme)),
 				})
 				continue
 			}
@@ -67,7 +67,7 @@ func EscapeMetricFamily(v *dto.MetricFamily, scheme model.EscapingScheme) *dto.M
 				continue
 			}
 			escaped.Label = append(escaped.Label, &dto.LabelPair{
-				Name:  proto.String(model.EscapeName(l.GetName(), scheme)),
+				Name:  new(model.EscapeName(l.GetName(), scheme)),
 				Value: l.Value,
 			})
 		}
