@@ -1,6 +1,9 @@
 <p align="center"><img src=".github/hero.svg" alt="common" width="880"></p>
 
 # Common
+
+[![Open in Hanzo](https://hanzo.app/badges/open-in-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/hanzoai/common&ref=main&action=open) [![Edit with Hanzo](https://hanzo.app/badges/edit-with-hanzo.svg)](https://hanzo.app/dev/open?repo=github.com/hanzoai/common&ref=main&action=edit)
+
 ![circleci](https://circleci.com/gh/prometheus/common/tree/main.svg?style=shield)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/prometheus/common/badge)](https://securityscorecards.dev/viewer/?uri=github.com/prometheus/common)
 
